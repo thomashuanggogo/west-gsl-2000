@@ -1,0 +1,22 @@
+const gslDataset = [
+  { "word": "ability", "type": "Noun", "uk": "/əˈbɪl.ə.ti/", "us": "/əˈbɪl.ə.t̬i/", "tw": "能力，才能", "cn": "能力，才能", "ex_en": "She has the ability to pass the exam.", "ex_tw": "她有能力通過這場考試。", "ex_cn": "她有能力通过这场考试。" },
+  { "word": "accept", "type": "Verb", "uk": "/əkˈsept/", "us": "/əkˈsept/", "tw": "接受，認可", "cn": "接受，认可", "ex_en": "Please accept this small gift.", "ex_tw": "請收下這份微薄的禮物。", "ex_cn": "请收下这份微薄的礼物。" },
+  { "word": "account", "type": "Noun", "uk": "/əˈkaʊnt/", "us": "/əˈkaʊnt/", "tw": "帳戶；描述", "cn": "账户；描述", "ex_en": "I need to open a bank account.", "ex_tw": "我需要開一個銀行帳戶。", "ex_cn": "我需要开一个银行账户。" },
+  { "word": "achieve", "type": "Verb", "uk": "/əˈtʃiːv/", "us": "/əˈtʃiːv/", "tw": "達到，實現", "cn": "达到，实现", "ex_en": "They hope to achieve their goals.", "ex_tw": "他們希望能實現他們的目標。", "ex_cn": "他们希望能实现他们的目标。" },
+  { "word": "act", "type": "Verb", "uk": "/ækt/", "us": "/ækt/", "tw": "行動；扮演", "cn": "行动；扮演", "ex_en": "Think carefully before you act.", "ex_tw": "行動前要仔細思考。", "ex_cn": "行动前要仔细思考。" },
+  { "word": "addition", "type": "Noun", "uk": "/əˈdɪʃ.ən/", "us": "/əˈdɪʃ.ən/", "tw": "增加；加法", "cn": "增加；加法", "ex_en": "In addition to English, she speaks French.", "ex_tw": "除了英語，她還會說法語。", "ex_cn": "除了英语，她还会说法语。" },
+  { "word": "address", "type": "Noun", "uk": "/əˈdres/", "us": "/ˈæd.res/", "tw": "地址；演講", "cn": "地址；演讲", "ex_en": "Please write your address down here.", "ex_tw": "請在這裡寫下您的地址。", "ex_cn": "请在这里写下您的地址。" },
+  { "word": "admit", "type": "Verb", "uk": "/ədˈmɪt/", "us": "/ədˈmɪt/", "tw": "承認；准許進入", "cn": "承认；准许进入", "ex_en": "He refused to admit his mistake.", "ex_tw": "他拒絕承認自己的錯誤。", "ex_cn": "他拒绝承认自己的错误。" },
+  { "word": "adopt", "type": "Verb", "uk": "/əˈdɒpt/", "us": "/əˈdɑːpt/", "tw": "採用；收養", "cn": "采用；收养", "ex_en": "The school decided to adopt a new method.", "ex_tw": "學校決定採用一種新方法。", "ex_cn": "学校决定采用一种新方法。" },
+  { "word": "advance", "type": "Noun", "uk": "/ədˈvɑːns/", "us": "/ədˈvæns/", "tw": "前進；進步", "cn": "前进；进步", "ex_en": "Recent advances in medical science.", "ex_tw": "醫療科學近期的進步。", "ex_cn": "医疗科学近期的进步。" },
+  { "word": "advantage", "type": "Noun", "uk": "/ədˈvɑːn.tɪdʒ/", "us": "/ədˈvæn.t̬ɪdʒ/", "tw": "優勢，利益", "cn": "优势，利益", "ex_en": "Living in a city has many advantages.", "ex_tw": "住在城市有很多優勢。", "ex_cn": "住在城市有很多优势。" },
+  { "word": "advice", "type": "Noun", "uk": "/ədˈvaɪs/", "us": "/ədˈvaɪs/", "tw": "建議，忠告", "cn": "建议，忠告", "ex_en": "Let me give you a piece of advice.", "ex_tw": "讓我給你一個建議。", "ex_cn": "让我给你一个建议。" },
+  { "word": "afford", "type": "Verb", "uk": "/əˈfɔːd/", "us": "/əˈfɔːrd/", "tw": "買得起；負擔得起", "cn": "买得起；负担得起", "ex_en": "I can't afford a new car right now.", "ex_tw": "我現在買不起新車。", "ex_cn": "我现在买不起新车。" },
+  { "word": "afraid", "type": "Adj", "uk": "/əˈfreɪd/", "us": "/əˈfreɪd/", "tw": "害怕的，擔心的", "cn": "害怕的，担心的", "ex_en": "Don't be afraid of the dark.", "ex_tw": "不要害怕黑暗。", "ex_cn": "不要害怕黑暗。" },
+  { "word": "agree", "type": "Verb", "uk": "/əˈɡriː/", "us": "/əˈɡriː/", "tw": "同意，一致", "cn": "同意，一致", "ex_en": "I completely agree with your opinion.", "ex_tw": "我完全同意你的意見。", "ex_cn": "我完全同意你的意见。" },
+  { "word": "allow", "type": "Verb", "uk": "/əˈlaʊ/", "us": "/əˈlaʊ/", "tw": "允許，准許", "cn": "允许，准许", "ex_en": "Pets are not allowed in the building.", "ex_tw": "這棟大樓內不允許攜帶寵物。", "ex_cn": "这栋大楼内不允许携带宠物。" },
+  { "word": "amount", "type": "Noun", "uk": "/əˈmaʊnt/", "us": "/əˈmaʊnt/", "tw": "數量，總額", "cn": "数量，总额", "ex_en": "A large amount of time was saved.", "ex_tw": "節省了大量的時間。", "ex_cn": "节省了大量的时间。" },
+  { "word": "ancient", "type": "Adj", "uk": "/ˈeɪn.ʃənt/", "us": "/ˈeɪn.ʃənt/", "tw": "古代的，古老的", "cn": "古代的，古老的", "ex_en": "We visited an ancient temple yesterday.", "ex_tw": "我們昨天參觀了一座古老寺廟。", "ex_cn": "我们昨天参观了一座古老寺庙。" },
+  { "word": "argument", "type": "Noun", "uk": "/ˈɑːɡ.jə.mənt/", "us": "/ˈɑːrɡ.jə.mənt/", "tw": "爭論；論點", "cn": "争论；论点", "ex_en": "They had a long argument about politics.", "ex_tw": "他們對政治爭論了很久。", "ex_cn": "他们对政治争论了很久。" },
+  { "word": "average", "type": "Adj", "uk": "/ˈæv.ər.ɪdʒ/", "us": "/ˈæv.ɚ.ɪdʒ/", "tw": "平均的；普通的", "cn": "平均的；普通的", "ex_en": "The average temperature in July is high.", "ex_tw": "七月的平均氣溫很高。", "ex_cn": "七月的平均气温很高。" }
+];

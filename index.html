@@ -1,0 +1,224 @@
+<!DOCTYPE html>
+<html lang="zh-TW" class="">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>West's GSL 2000 核心詞彙手冊 · 大師版</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+        }
+    </script>
+</head>
+<body class="bg-[#fcfaf7] dark:bg-stone-950 text-stone-800 dark:text-stone-200 min-h-screen p-4 md:p-8 font-sans transition-colors duration-300">
+
+    <div class="max-w-5xl mx-auto flex justify-between items-center mb-6 text-sm">
+        <div class="text-stone-400 font-mono flex items-center gap-4">
+            <span>West's GSL 外部資料庫連線版</span>
+            <button onclick="toggleDarkMode()" id="themeBtn" class="text-xl hover:scale-110 transition-transform" title="切換深色/淺色模式">🌙</button>
+        </div>
+        <div class="flex gap-2 bg-stone-200/60 dark:bg-stone-800 p-1 rounded-lg">
+            <button id="btnTw" onclick="setLang('tw')" class="px-3 py-1 rounded-md bg-white dark:bg-stone-600 text-stone-900 dark:text-stone-100 shadow-sm font-medium transition-all">繁體</button>
+            <button id="btnCn" onclick="setLang('cn')" class="px-3 py-1 rounded-md text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 transition-all">简体</button>
+        </div>
+    </div>
+
+    <header class="max-w-5xl mx-auto text-center my-8 md:my-12">
+        <h1 class="text-4xl md:text-5xl font-serif font-black text-stone-900 dark:text-stone-100 tracking-wide">West's GSL 2000</h1>
+        <p class="text-stone-500 dark:text-stone-400 mt-2 text-base">通用詞表精炼大師版 · 智慧雙語有聲學習手冊</p>
+    </header>
+
+    <div class="max-w-5xl mx-auto mb-8">
+        <div class="relative mb-6">
+            <input type="text" id="searchInput" oninput="searchWords()" placeholder="搜尋單字、詞性、或中文釋義..." 
+                   class="w-full px-6 py-4 rounded-2xl border border-stone-200/80 dark:border-stone-700/50 shadow-sm focus:outline-none focus:ring-2 focus:ring-amber-500 dark:focus:ring-amber-500/50 bg-white dark:bg-stone-900 placeholder-stone-400 dark:placeholder-stone-500 text-lg transition-all dark:text-stone-200">
+            <span id="counter" class="absolute right-5 top-4 bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400 text-xs font-mono px-2.5 py-1 rounded-full border border-stone-200 dark:border-stone-700">
+                載入中...
+            </span>
+        </div>
+        
+        <!-- 記憶篩選器 -->
+        <div class="flex justify-center gap-2 text-sm font-medium">
+            <button id="filterAll" onclick="setFilter('all')" class="px-4 py-1.5 rounded-full bg-stone-800 dark:bg-stone-200 text-white dark:text-stone-900 shadow transition-all">全部單字</button>
+            <button id="filterLearning" onclick="setFilter('learning')" class="px-4 py-1.5 rounded-full bg-stone-200 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-300 dark:hover:bg-stone-700 transition-all">學習中</button>
+            <button id="filterMastered" onclick="setFilter('mastered')" class="px-4 py-1.5 rounded-full bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/60 transition-all">已掌握</button>
+        </div>
+    </div>
+
+    <main id="wordContainer" class="max-w-5xl mx-auto grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-5">
+        </main>
+
+    <script>
+        let currentLang = 'tw';
+        let filterMode = 'all'; 
+        let gslDataset = [];
+        let masteredWords = JSON.parse(localStorage.getItem('gslMastered')) || [];
+        
+        // 深色模式初始化
+        if (localStorage.theme === 'dark' || (!('theme' in localStorage) && window.matchMedia('(prefers-color-scheme: dark)').matches)) {
+            document.documentElement.classList.add('dark');
+            document.getElementById('themeBtn').innerText = '☀️';
+        } else {
+            document.documentElement.classList.remove('dark');
+            document.getElementById('themeBtn').innerText = '🌙';
+        }
+
+        function toggleDarkMode() {
+            const html = document.documentElement;
+            const btn = document.getElementById('themeBtn');
+            if (html.classList.contains('dark')) {
+                html.classList.remove('dark');
+                localStorage.theme = 'light';
+                btn.innerText = '🌙';
+            } else {
+                html.classList.add('dark');
+                localStorage.theme = 'dark';
+                btn.innerText = '☀️';
+            }
+        }
+
+        async function loadDataset() {
+            try {
+                const response = await fetch('words.json');
+                gslDataset = await response.json();
+                searchWords(); 
+            } catch (error) {
+                console.error("無法讀取單字庫檔案：", error);
+                document.getElementById('wordContainer').innerHTML = `<p class="col-span-full text-center text-red-500">讀取 words.json 失敗，請確認檔案是否存在於同個目錄下。</p>`;
+            }
+        }
+
+        function toggleMastered(word) {
+            if (masteredWords.includes(word)) {
+                masteredWords = masteredWords.filter(w => w !== word);
+            } else {
+                masteredWords.push(word);
+            }
+            localStorage.setItem('gslMastered', JSON.stringify(masteredWords));
+            searchWords(); 
+        }
+
+        function setFilter(mode) {
+            filterMode = mode;
+            
+            const inactiveClass = "px-4 py-1.5 rounded-full bg-stone-200 dark:bg-stone-800 text-stone-600 dark:text-stone-400 hover:bg-stone-300 dark:hover:bg-stone-700 transition-all";
+            const activeClass = "px-4 py-1.5 rounded-full bg-stone-800 dark:bg-stone-200 text-white dark:text-stone-900 shadow transition-all";
+            const masterActive = "px-4 py-1.5 rounded-full bg-green-600 dark:bg-green-500 text-white dark:text-stone-900 shadow transition-all";
+            const masterInactive = "px-4 py-1.5 rounded-full bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/60 transition-all";
+
+            document.getElementById('filterAll').className = mode === 'all' ? activeClass : inactiveClass;
+            document.getElementById('filterLearning').className = mode === 'learning' ? activeClass : inactiveClass;
+            document.getElementById('filterMastered').className = mode === 'mastered' ? masterActive : masterInactive;
+            
+            searchWords();
+        }
+
+        function renderCards(words) {
+            const container = document.getElementById('wordContainer');
+            const counter = document.getElementById('counter');
+            
+            const total = gslDataset.length;
+            const masteredCount = masteredWords.length;
+            counter.innerText = `顯示 ${words.length} 詞 | 進度 ${masteredCount}/${total}`;
+
+            if (words.length === 0) {
+                container.innerHTML = `<div class="col-span-full text-center py-12 bg-white dark:bg-stone-900 rounded-2xl border border-stone-200/60 dark:border-stone-800 shadow-inner"><p class="text-stone-400 dark:text-stone-500 text-lg">沒有找到符合條件的單字 🔍</p></div>`;
+                return;
+            }
+
+            container.innerHTML = words.map(w => {
+                const definition = currentLang === 'tw' ? w.tw : w.cn;
+                const exampleTranslation = currentLang === 'tw' ? w.ex_tw : w.ex_cn;
+                const isMastered = masteredWords.includes(w.word);
+
+                const cardClass = isMastered 
+                    ? "bg-stone-50/70 dark:bg-stone-900/60 p-6 rounded-2xl shadow-sm border border-green-200 dark:border-green-900/30 hover:shadow-md transition-all duration-300 flex flex-col justify-between opacity-80"
+                    : "bg-white dark:bg-stone-900 p-6 rounded-2xl shadow-sm border border-stone-200/50 dark:border-stone-800 hover:shadow-md hover:border-amber-500/30 dark:hover:border-amber-500/30 transition-all duration-300 flex flex-col justify-between";
+                
+                const btnIcon = isMastered ? '✅ 已掌握' : '⭐ 記住';
+                const btnClass = isMastered 
+                    ? "text-xs bg-green-100 dark:bg-green-900/40 text-green-700 dark:text-green-400 hover:bg-green-200 dark:hover:bg-green-900/60 font-bold px-2 py-1 rounded border border-green-200 dark:border-green-800 transition-colors cursor-pointer"
+                    : "text-xs bg-stone-100 dark:bg-stone-800 text-stone-500 dark:text-stone-400 hover:bg-amber-100 hover:text-amber-700 dark:hover:bg-amber-900/40 dark:hover:text-amber-400 font-bold px-2 py-1 rounded border border-stone-200 dark:border-stone-700 transition-colors cursor-pointer";
+
+                return `
+                <div class="${cardClass}">
+                    <div>
+                        <div class="flex justify-between items-start gap-2 mb-2">
+                            <h2 class="text-2xl font-bold text-stone-900 dark:text-stone-100 tracking-tight flex-1 ${isMastered ? 'line-through text-stone-400 dark:text-stone-600' : ''}">${w.word}</h2>
+                            <span class="text-[11px] uppercase tracking-wider bg-amber-50 dark:bg-amber-900/20 text-amber-800 dark:text-amber-400 font-bold px-2 py-1 rounded-md border border-amber-200/50 dark:border-amber-800/50 mr-1">${w.type}</span>
+                            <button onclick="toggleMastered('${w.word}')" class="${btnClass}" title="標記狀態">${btnIcon}</button>
+                        </div>
+                        <div class="text-xs text-stone-400 dark:text-stone-500 font-mono mb-4 flex items-center gap-3 bg-stone-50 dark:bg-stone-800/50 p-2 rounded-lg border border-stone-100 dark:border-stone-800">
+                            <div class="cursor-pointer hover:text-amber-600 dark:hover:text-amber-400 transition-colors" onclick="speak('${w.word}', 'en-US')"><span class="bg-amber-100 dark:bg-amber-900/40 text-amber-700 dark:text-amber-400 font-bold px-1 rounded text-[10px]">US</span> ${w.us} 🔊</div>
+                            <div class="cursor-pointer hover:text-blue-600 dark:hover:text-blue-400 transition-colors" onclick="speak('${w.word}', 'en-GB')"><span class="bg-blue-100 dark:bg-blue-900/40 text-blue-700 dark:text-blue-400 font-bold px-1 rounded text-[10px]">UK</span> ${w.uk} 🔊</div>
+                        </div>
+                        <p class="text-stone-800 dark:text-stone-300 font-semibold text-lg mb-4 ${isMastered ? 'text-stone-500 dark:text-stone-600' : ''}">${definition}</p>
+                    </div>
+                    <div class="border-l-2 border-amber-500/30 dark:border-amber-500/40 pl-3 pt-1 text-sm bg-stone-50/50 dark:bg-stone-800/30 p-2.5 rounded-r-lg group cursor-pointer" onclick="speak('${w.ex_en.replace(/'/g, "\\'")}', 'en-US')">
+                        <p class="text-stone-600 dark:text-stone-400 group-hover:text-amber-700 dark:group-hover:text-amber-400 transition-colors font-medium">${w.ex_en}</p>
+                        <p class="text-stone-400 dark:text-stone-500 mt-1">${exampleTranslation}</p>
+                    </div>
+                </div>`;
+            }).join('');
+        }
+
+        function speak(text, lang) {
+            if ('speechSynthesis' in window) {
+                window.speechSynthesis.cancel();
+                const utterance = new SpeechSynthesisUtterance(text);
+                utterance.lang = lang;
+                utterance.rate = 0.88;
+                window.speechSynthesis.speak(utterance);
+            }
+        }
+
+        function searchWords() {
+            const query = document.getElementById('searchInput').value.trim().toLowerCase();
+            
+            const filtered = gslDataset.filter(w => {
+                const matchQuery = w.word.toLowerCase().includes(query) || 
+                                   w.type.toLowerCase().includes(query) || 
+                                   w.tw.includes(query) || 
+                                   w.cn.includes(query);
+                                   
+                const isMastered = masteredWords.includes(w.word);
+                
+                if (filterMode === 'learning' && isMastered) return false;
+                if (filterMode === 'mastered' && !isMastered) return false;
+                
+                return matchQuery;
+            });
+            
+            renderCards(filtered);
+        }
+
+        function setLang(lang) {
+            currentLang = lang;
+            
+            const activeLight = "px-3 py-1 rounded-md bg-white text-stone-900 shadow-sm font-medium transition-all";
+            const activeDark = "px-3 py-1 rounded-md bg-stone-600 text-stone-100 shadow-sm font-medium transition-all";
+            const inactive = "px-3 py-1 rounded-md text-stone-500 dark:text-stone-400 hover:text-stone-900 dark:hover:text-stone-200 transition-all";
+            
+            const isDark = document.documentElement.classList.contains('dark');
+            const activeClass = isDark ? activeDark : activeLight;
+
+            document.getElementById('btnTw').className = lang === 'tw' ? activeClass : inactive;
+            document.getElementById('btnCn').className = lang === 'cn' ? activeClass : inactive;
+            searchWords();
+        }
+
+        // 監聽系統主題變化並同步簡繁按鈕樣式
+        const observer = new MutationObserver((mutations) => {
+            mutations.forEach((mutation) => {
+                if (mutation.attributeName === 'class') {
+                    setLang(currentLang); // 重新應用當前語言按鈕的樣式以匹配新主題
+                }
+            });
+        });
+        observer.observe(document.documentElement, { attributes: true });
+
+        window.onload = loadDataset;
+    </script>
+</body>
+</html>
